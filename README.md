@@ -102,3 +102,23 @@ Cliquez sur le bouton **"Review + create"**
 Cliquez sur le bouton **"Create"**
 
 ![sparkle](Pictures/018.png)
+
+Après le déploiement de votre base de données et du server SQL vous devez avoir 3 services dans votre groupe de ressources
+
+![sparkle](Pictures/019.png)
+
+## Création du service Azure Data Factory
+
+Dans votre groupe de ressources, cliquez sur le bouton **" + Add"**
+
+![sparkle](Pictures/020.png)
+
+Dans la barre de recherche entrez **"Data Factory"**
+
+![sparkle](Pictures/021.png)
+
+Puis cliquez sur le bouton **"Create"**
+
+![sparkle](Pictures/022.png)
+
+
