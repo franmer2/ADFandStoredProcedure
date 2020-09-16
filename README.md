@@ -45,3 +45,43 @@ Cliquez sur le groupe de ressources créé précédement
 
 ![sparkle](Pictures/007.png)
 
+## Création du compte de stockage
+
+Une fois dans le groupe de ressources, cliquez sur le bouton "**Add**"
+
+![sparkle](Pictures/008.png)
+
+Recherchez le compte de stockage
+
+![sparkle](Pictures/009.png)
+
+Cliquez sur le bouton "**Create**"
+
+![sparkle](Pictures/010.png)
+
+
+
+Complétez la création du compte de stockage et cliquez sur "**Review** + **create**"
+
+![sparkle](Pictures/011.png)
+
+Après avoir vérifié les informations de création du compte de stockage, cliquez sur le bouton "**Create**"
+
+![sparkle](Pictures/012.png)
+
+## Création d'une base de données Azure SQL
+Ici, nous allons créer une base de données uniquement pour héberger et exécuter notre procédure stockée. Vous pouvez donc, si vous le souhiatez, utiliser une base de données Azure éxistante.
+
+Retournez dans le groupe de ressources. Vous devez avoir votre compte de stockage comme première resource.
+
+Cliquez sur le bouton "**Add**"
+
+![sparkle](Pictures/013.png)
+
+Puis, recherchez "**Azure SQL**" 
+
+![sparkle](Pictures/014.png)
+
+Cliquez sur le bouton **Create**
+
+![sparkle](Pictures/015.png)
