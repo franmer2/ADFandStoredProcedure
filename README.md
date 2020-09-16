@@ -107,7 +107,7 @@ Après le déploiement de votre base de données et du server SQL vous devez avo
 
 ![sparkle](Pictures/019.png)
 
-## Création du service Azure Data Factory
+## Création du service Azure Data Factory (ADF)
 
 Dans votre groupe de ressources, cliquez sur le bouton **" + Add"**
 
@@ -121,4 +121,15 @@ Puis cliquez sur le bouton **"Create"**
 
 ![sparkle](Pictures/022.png)
 
+Vérifiez que vous avez bien sélectionné le bon groupe de ressources et donnez un nom à votre service ADF.
+
+Sélectionnez **"V2"** pour la version.
+
+Cliquez sur le bouton **"Next: Git configuration "**
+
+![sparkle](Pictures/023.png)
+
+Cochez la case **"Configure Git Later"** et cliquez sur le bouton **"Review + create"**
+
+![sparkle](Pictures/024.png)
 
