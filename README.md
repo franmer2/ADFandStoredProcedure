@@ -89,3 +89,16 @@ Cliquez sur le bouton **Create**
 Choisissez **SQL Database** puis cliquez sur le bouton **Create**
 
 ![sparkle](Pictures/016.png)
+
+Choisissez le groupe de ressouces précédement créé, définissez le nom de la base de données et créez un nouveau server SQL (il est aussi possible d'utiliser un serveur existant)
+
+Un tier **Basic** sera largement suffiment pour notre démonstration
+
+Cliquez sur le bouton **"Review + create"**
+
+
+![sparkle](Pictures/017.png)
+
+Cliquez sur le bouton **"Create"**
+
+![sparkle](Pictures/018.png)
