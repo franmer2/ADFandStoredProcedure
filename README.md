@@ -85,3 +85,7 @@ Puis, recherchez "**Azure SQL**"
 Cliquez sur le bouton **Create**
 
 ![sparkle](Pictures/015.png)
+
+Choisissez **SQL Database** puis cliquez sur le bouton **Create**
+
+![sparkle](Pictures/016.png)
