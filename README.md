@@ -133,3 +133,6 @@ Cochez la case **"Configure Git Later"** et cliquez sur le bouton **"Review + cr
 
 ![sparkle](Pictures/024.png)
 
+Dans la page de validation, ciquez sur le bouton **"Create"**
+
+![sparkle](Pictures/025.png)
