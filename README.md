@@ -103,7 +103,7 @@ Cliquez sur le bouton **"Create"**
 
 ![sparkle](Pictures/018.png)
 
-Après le déploiement de votre base de données et du server SQL vous devez avoir 3 services dans votre groupe de ressources
+Après le déploiement de votre base de données Azure SQL et du server Azure SQL vous devez avoir 3 services dans votre groupe de ressources
 
 ![sparkle](Pictures/019.png)
 
@@ -136,3 +136,26 @@ Cochez la case **"Configure Git Later"** et cliquez sur le bouton **"Review + cr
 Dans la page de validation, ciquez sur le bouton **"Create"**
 
 ![sparkle](Pictures/025.png)
+
+Après la création du service Azure Data Factory, vous devriez avoir 4 services dans votre groupe de ressources
+
+![sparkle](Pictures/026.png)
+
+## Préparation de la procédure stockée.
+
+Dans notre exemple, la procédure stockée va lire des données dans un stockage blob et effectuer des transformations. Les transformations réalisées ici seront extrêmement basiques. Le but ici est d'illustrer l'utilisation des procédures stockées avec Azure Data Factory.
+
+### Paramètrage du serveur Azure SQL
+
+Configurez le Firewall du serveur Azure SQL afin de pouvoir vous y connecter avec des outils comme SQL Server Management Studio ou Azure Data Studio
+
+Depuis le portail Azure, sélection votre serveur Azure SQL, puis cliquez sur **"Firewalls and virtual networks"**
+
+Saisissez les adresses ip nécessaires.
+
+![sparkle](Pictures/027.png)
+
+
+Après configuration des adresses ip, cliquez sur le bouton **"Save"**
+
+![sparkle](Pictures/028.png)
