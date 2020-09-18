@@ -372,7 +372,19 @@ BEGIN
 
 ![sparkle](Pictures/048.png)
 
-Il est possible de tester la procédure stockée en téléchargeant le fichier d'exemple à la racine de notre conteneur.
+Il est possible de tester la procédure stockée en téléchargeant le fichier d'exemple (qui se trouve dans le [github](https://github.com/franmer2/ADFandStoredProcedure/blob/master/Resources/test.csv)) à la racine du conteneur.
 
 
 ![sparkle](Pictures/049.png)
+
+Puis dans Azure Data Studio, entrez le script ci-dessous:
+
+```Javascript
+EXECUTE franmer @MyFileName='test.csv'
+```
+
+Si tout se déroule comme prévu, vous devriez obtenir le résultat suivant :
+
+![sparkle](Pictures/050.png)
+
+
