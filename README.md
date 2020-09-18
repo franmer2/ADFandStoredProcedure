@@ -256,7 +256,7 @@ Donnez un nom au répertoire et cliquez sur le bouton **"Ok"**
 
 ![sparkle](Pictures/039.png)
 
-Cliquez sur le bouton **"Upload"** et télechargez le fichier de format précédement créé avec la fonction BCP.
+Cliquez sur le bouton **"Upload"** et téléchargez le fichier de format précédement créé avec la fonction BCP.
 
 ![sparkle](Pictures/040.png)
 
@@ -264,3 +264,115 @@ Votre fichier est maintenant téléchargé.
 
 ![sparkle](Pictures/041.png)
 
+## Création de la procédure stockée
+
+Notre procédure stockée va lire des fichiers qui se trouvent dans notre compte de stockage et effectuer des opéations sur les données qu'elle va récupérer.
+
+Il est donc néccessaire de faire des étapes préliminaires pour permettre à la procédure stockée d'accéder au compte de stockage
+
+- Création d'une signature d'accès partagé (compte de stockage) [(Documentation)](https://docs.microsoft.com/fr-fr/azure/storage/common/storage-sas-overview)
+- Création d'une clef principale de base de données [(Doucumentation)](https://docs.microsoft.com/fr-fr/sql/t-sql/statements/create-master-key-transact-sql?view=sql-server-ver15)
+
+- Création des informations d'identification pour accéder au compte de stockage [(Documetation)](https://docs.microsoft.com/fr-fr/sql/t-sql/statements/create-database-scoped-credential-transact-sql?view=sql-server-ver15)
+- Création d'une source externe [(Documentation)](https://docs.microsoft.com/fr-fr/sql/t-sql/statements/create-external-data-source-transact-sql?view=sql-server-ver15)
+
+
+### Création d'une signature d'accès partagé (Compte de Stockage)
+
+Depuis le portail Azure, allez dans votre compte de stockage puis cliquez sur **"Shared Access Signature"**.
+
+Définissez les options de la signature d'accès partagé puis cliquez sur le bouton **"Generate SAS and connection string"**
+
+
+![sparkle](Pictures/042.png)
+
+
+Copiez le contenu du champ **"SAS Token"** puis gardez le sous la main, on va en avoir besoin un peu plus tard.
+
+![sparkle](Pictures/043.png)
+
+
+### Création d'une clef principale de base de données (Azure SQL)
+
+Depuis Azure Data Studio, copiez la reqûete ci-dessous :
+
+```javascript
+CREATE MASTER KEY ENCRYPTION BY PASSWORD='<EnterStrongPasswordHere>';
+
+```
+
+Puis cliquez sur le bouton **Run**
+
+![sparkle](Pictures/044.png)
+
+
+### Création des informations d'identification pour accéder au compte de stockage
+
+Depuis Azure Data Studio, exécutez le script ci-dessous :
+
+**ATTENTION !!!!**, retirer le signe **"?"** après avoir copier votre signature d'accès partagé. 
+
+```javascript
+CREATE DATABASE SCOPED CREDENTIAL AccessAzureStorage
+WITH
+  IDENTITY = 'SHARED ACCESS SIGNATURE',
+  -- Remove ? from the beginning of the SAS token
+  SECRET = '<YOUR SHARED ACCESS SIGNATURE>' ;
+
+```
+
+Pour plus de clarté, voici une copie d'écran
+
+![sparkle](Pictures/045.png)
+
+### Création des informations d'identification pour accéder au compte de stockage 
+
+Depuis Azure Data Studio, exécutez le script ci-dessous :
+
+```javascript
+CREATE EXTERNAL DATA SOURCE AzureStorageExternalData
+WITH
+  ( LOCATION = '<YOUR LOCATION>' ,
+    CREDENTIAL = AccessAzureStorage ,
+    TYPE = BLOB_STORAGE
+  ) ;
+
+```
+
+Remplacez <YOUR LOCATION> par le chemin de votre conteneur. Cette information peut être retouvée dans le portail Azure, dans les propriétés de du conteneur
+
+![sparkle](Pictures/046.png)
+
+Ci-dessous une copie d'écran dans Azure Data Studio :
+
+![sparkle](Pictures/047.png)
+
+### Création de la procédure stockée
+
+Dans Azure Data Studio, copiez le script ci-dessous :
+
+```javascript
+CREATE PROCEDURE Franmer
+       @MyFileName nvarchar(MAX)
+AS
+BEGIN
+       declare @query nvarchar(MAX)
+       set @query = 'Select LastName, sum(Sales) as TotalSales FROM OPENROWSET(BULK ''' + @MyFileName + ''', 
+       DATA_SOURCE = ''AzureStorageExternalData'',
+       FORMAT=''CSV'',
+       FORMATFILE=''Format/format.xml'',
+       FORMATFILE_DATA_SOURCE = ''AzureStorageExternalData'') as products
+       GROUP BY LastName;'
+ 
+       EXEC sp_executesql @query
+ END
+
+```
+
+
+![sparkle](Pictures/048.png)
+
+Il est possible de tester la procédure stockée en téléchargeant le fichier d'exemple à la racine de notre conteneur.
+
+
+![sparkle](Pictures/049.png)
