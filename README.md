@@ -245,3 +245,22 @@ Et cliquez sur le bouton **"+ Container"**
 Donnez un nom et cliquez sur le bouton **"Create"**
 
 ![sparkle](Pictures/037.png)
+
+Nous allons créer un répertoire pour notre fichier de format.
+
+Cliquez sur **"Storage Explorer (preview)"**, sélectionnez le conteneur créé précédement, puis cliquez sur **"New Folder"**
+
+![sparkle](Pictures/038.png)
+
+Donnez un nom au répertoire et cliquez sur le bouton **"Ok"**
+
+![sparkle](Pictures/039.png)
+
+Cliquez sur le bouton **"Upload"** et télechargez le fichier de format précédement créé avec la fonction BCP.
+
+![sparkle](Pictures/040.png)
+
+Votre fichier est maintenant téléchargé.
+
+![sparkle](Pictures/041.png)
+
