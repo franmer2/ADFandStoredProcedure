@@ -60,7 +60,6 @@ Cliquez sur le bouton "**Create**"
 ![sparkle](Pictures/010.png)
 
 
-
 Complétez la création du compte de stockage et cliquez sur "**Review** + **create**"
 
 ![sparkle](Pictures/011.png)
@@ -264,6 +263,25 @@ Votre fichier est maintenant téléchargé.
 
 ![sparkle](Pictures/041.png)
 
+### Préparation du partage de fichier
+
+Depuis le portail Azure, sélectionnez votre compte de stockage puis cliquez sur **"File shares"**
+
+![sparkle](Pictures/0411.png)
+
+Cliquez sur le bouton **"+ File share"**
+
+![sparkle](Pictures/0412.png)
+
+Donnez un nom à votre partage de fichier puis cliquez sur le bouton **"Create"**
+
+![sparkle](Pictures/0413.png)
+
+Vous devriez obtenir un résultat similaire à la copie d'écran ci-dessous :
+
+![sparkle](Pictures/0414.png)
+
+
 ## Création de la procédure stockée
 
 Notre procédure stockée va lire des fichiers qui se trouvent dans notre compte de stockage et effectuer des opéations sur les données qu'elle va récupérer.
@@ -387,4 +405,53 @@ Si tout se déroule comme prévu, vous devriez obtenir le résultat suivant :
 
 ![sparkle](Pictures/050.png)
 
+## Création du pipeline Azure Data Factory
 
+Depuis le portail Azure, retrouvez votre service Azure Data Factory, puis cliquez sur **"Author & Monitor"**
+
+![sparkle](Pictures/051.png)
+
+## Création des services liés
+### Service lié Blob Storage
+
+Une fois sur la pagge d'accueil d'AZure Data Factory, cliquez sur le bouton **"Manage"** à gauche de l'écran
+
+
+![sparkle](Pictures/052.png)
+
+
+Cliquez sur **"Linked services"** puis sur le bouton **"+ New"**  
+
+![sparkle](Pictures/053.png)
+
+Dans le liste des services liés, sélectionnez **"Azure Blob Storage"**
+
+![sparkle](Pictures/054.png)
+
+Donnez un nom au service lié, sélectionnez le compte de stockage puis testez la connexion en cliquant sur **"Test connection"** (1). Une fois le test réussi, cliquez sur le bouton **"Create"** (2).
+
+![sparkle](Pictures/055.png)
+
+### Service lié Azure File Storage
+
+Créez un nouveau service lié de type **"Azure File Storage"**
+
+![sparkle](Pictures/056.png)
+
+Puis complétez les informations de connexion
+
+![sparkle](Pictures/057.png)
+
+### Service lié Azure SQL Database
+
+Enfin, Créez un service lié de type **"Azure SQL Database"**
+
+![sparkle](Pictures/058.png)
+
+Puis complétez les informations de connexion
+
+![sparkle](Pictures/059.png)
+
+Vous devez avoir en tout 3 services liés
+
+![sparkle](Pictures/060.png)
