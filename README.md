@@ -455,3 +455,84 @@ Puis complétez les informations de connexion
 Vous devez avoir en tout 3 services liés
 
 ![sparkle](Pictures/060.png)
+
+## Création du pipeline
+
+Ci-dessous une vue globale du pipeline que nous allons créer 
+
+
+![sparkle](Pictures/061.png)
+
+
+### Création des "Datasets"
+#### Création du "Blob Storage Dataset"
+
+Nous allons commencer par créer nos *"Datasets"* afin d'accéder à notre procédure stockée. notre *"blob storage"* et le *"file storage"*
+
+Dans la console Azure Data Factory, sur la gauche, cliquez sur le bouton **"+"** puis sur **"Dataset"**
+
+![sparkle](Pictures/062.png)
+
+Choisissez un *"Dataset"* de type **"Azure Blob Storage"** puis cliquez sur le bouton **"Continue"**
+
+![sparkle](Pictures/063.png)
+
+Choisissez le format **"DelimitedText"** puis cliquez sur le bouton **"Continue"**
+
+![sparkle](Pictures/064.png)
+
+Entrez les informations de votre stockage blob puis cliquez sur le bouton **"OK"**
+
+![sparkle](Pictures/065.png)
+
+Une fois le *"Dataset"* créé, cliquez sur **"Parameters"**, puis sur le bouton **"+ New"**. Donnez un nom au paramètre. Ici je vais nommer mon paramètre **"FileName"**
+
+![sparkle](Pictures/066.png)
+
+Cliquez sur l'onglet **"Connection"**, puis dans le champ **"File"**. Cliquez ensuite sur le lien **"Add dynamic content"**
+
+![sparkle](Pictures/067.png)
+
+Le volet **"Add dynamic content"** apparaît. rajoutez l'expression **"@dataset().FileName"**. Cliquez sur le bouton **"Finish"**
+
+![sparkle](Pictures/068.png)
+
+Notre premier *"Dataset"* est prêt. Cliquez sur le bouton **"Publish all"** et publiez le *"dataset"*
+
+![sparkle](Pictures/069.png)
+
+
+#### Création du "File Storage Dataset"
+
+Dans la console Azure Data Factory, sur la gauche, cliquez sur le bouton **"+"** puis sur **"Dataset"**
+
+![sparkle](Pictures/062.png)
+
+Choisissez un *"Dataset"* de type **"Azure File Storage"** puis cliquez sur le bouton **"Continue"**
+
+![sparkle](Pictures/070.png)
+
+Choisissez le format **"DelimitedText"** puis cliquez sur le bouton **"Continue"**
+
+![sparkle](Pictures/064.png)
+
+Entrez les informations de votre stockage *"file"* puis cliquez sur le bouton **"OK"**
+
+![sparkle](Pictures/071.png)
+
+Une fois le *"Dataset"* créé, cliquez sur **"Parameters"**, puis sur le bouton **"+ New"** 3 fois afin de créer 3 paramètres. Donnez un nom aux paramètres 
+
+![sparkle](Pictures/072.png)
+
+Cliquez sur l'onglet **"Connection"**, puis dans le champ **"File"**. Cliquez ensuite sur le lien **"Add dynamic content"**
+
+![sparkle](Pictures/073.png)
+
+Le volet **"Add dynamic content"** apparaît. rajoutez l'expression **"@concat(dataset().Prefix,'-',dataset().Date,'-',dataset().Name,'.csv')"**. Cliquez sur le bouton **"Finish"**
+
+![sparkle](Pictures/074.png)
+
+Cliquez sur le bouton **"Publish all"**
+
+![sparkle](Pictures/075.png)
+
