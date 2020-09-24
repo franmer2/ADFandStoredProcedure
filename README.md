@@ -493,7 +493,13 @@ Cliquez sur l'onglet **"Connection"**, puis dans le champ **"File"**. Cliquez en
 
 ![sparkle](Pictures/067.png)
 
-Le volet **"Add dynamic content"** apparaît. rajoutez l'expression **"@dataset().FileName"**. Cliquez sur le bouton **"Finish"**
+Le volet **"Add dynamic content"** apparaît. rajoutez l'expression
+
+```Javascript
+ @dataset().FileName 
+```
+
+ Cliquez sur le bouton **"Finish"**
 
 ![sparkle](Pictures/068.png)
 
@@ -528,11 +534,191 @@ Cliquez sur l'onglet **"Connection"**, puis dans le champ **"File"**. Cliquez en
 
 ![sparkle](Pictures/073.png)
 
-Le volet **"Add dynamic content"** apparaît. rajoutez l'expression **"@concat(dataset().Prefix,'-',dataset().Date,'-',dataset().Name,'.csv')"**. Cliquez sur le bouton **"Finish"**
+Le volet **"Add dynamic content"** apparaît. rajoutez l'expression
+
+```Javascript
+ @concat(dataset().Prefix,'-',dataset().Date,'-',dataset().Name,'.csv')
+ ```
+ 
+ Cliquez sur le bouton **"Finish"**
 
 ![sparkle](Pictures/074.png)
 
 Cliquez sur le bouton **"Publish all"**
 
 ![sparkle](Pictures/075.png)
+
+#### Création du "Dataset" Azure SQL Database
+
+Dans la console Azure Data Factory, sur la gauche, cliquez sur le bouton **"+"** puis sur **"Dataset"**
+
+![sparkle](Pictures/062.png)
+
+Choisissez un *"Dataset"* de type **"Azure SQL Database"** puis cliquez sur le bouton **"Continue"**
+
+![sparkle](Pictures/076.png)
+
+Renseignez les données concerant Azure SQL puis cliquez sur le bouton **"OK"**
+
+![sparkle](Pictures/077.png)
+
+Cliquez sur le bouton **"Publish"**
+
+
+![sparkle](Pictures/078.png)
+
+### Création des activités du pipeline
+
+Depuis le portail d'Azure Data Factory, cliquez sur le bouton **"+"** puis sur **"Pipeline"**
+
+![sparkle](Pictures/079.png)
+
+Au niveau de votre pipeline, créez un nouveau paramètre. Dans l'onglet **"Parameters"**. Cliquez sur le bouton **"+ New"** puis puis donnez un nom au paramètre
+
+![sparkle](Pictures/080.png)
+
+
+Cliquez ensuite sur l'onglet **"Variables"** afin de rajouter une variable pour capturer la date. Cliquez sur le bouton **"+ New"** puis puis donnez un nom à la variable
+
+![sparkle](Pictures/081.png)
+
+
+
+Comme nous avons une contrainte fonctionnelle au niveau du nom du fichier, qui doit comporter la date dans son nom, nous devons la capturer au début du pipeline afin de s'assurer d'avoir la même valeur durant l'exécution du pipeline.
+
+
+De plus, comme la destination de la copie est un *"File storage"*, il va falloir formater la date afin de ne conserver que des caractères supportés par le *"File storage"*.
+
+Rajoutez une activité **"Set variable"** dans votre pipeline, qui se trouve dans la rubrique **"General"**. Puis cliquez sur l'onglet **"Variables"**. Dans la liste déroulante **"Name"**, choisissez la variable **"Date"**, cliquez dans le champ **"Value"**, puis cliquez sur **"Add dynamic content"**
+
+![sparkle](Pictures/082.png)
+
+Dans le volet **"Add dynamic content"**, rajoutez la fonction 
+
+```Javascript
+@formatDateTime(utcnow(),'yyyy-MM-ddTHH-mm-ss')
+```
+
+
+Cliquez sur le bouton **"Finish"**
+
+![sparkle](Pictures/083.png)
+
+
+Depuis le volet **"Activities"**, dans la rubrique **"Move and transform"**, rajoutez l'activité **"Copy data"** dans votre pipeline juste après l'activité **"Set variable 1"** 
+
+![sparkle](Pictures/084.png)
+
+Cliquez sur l'onglet **"Source"**. Dans la liste déroulante **"Source Dataset"**, sélectionnez votre *"Dataset"* Azure SQL. Puis cliquez sur **"Stored pocedure"**, et sélectionnez votre procédure stockée dans la liste déroulante **"Name"**.
+
+Cliquez ensuite sur le bouton **"Import parameter"** afin de récupérer le paramètre de la procédure stockée. Cliquez dans le champ **"Value"** pour faire apparaître le lien **"Add dynanic content"**. Cliquez sur ce lien.
+
+![sparkle](Pictures/085.png)
+
+Dans le volet **"Add dynanic content"**, rajoutez l'expression 
+
+```Javascript
+@pipeline().parameters.FileName
+```
+
+
+Cliquez sur le bouton **"Finish"**.
+
+![sparkle](Pictures/086.png)
+
+
+Cliquez sur l'onglet **"Sink"**. Dans la liste déroulante **"Sink dataset"**, sélectionnez le dataset du *"File storage"*. Pour chacun des paramètres, rajoutez les valeurs suivantes, à chaque fois en cliquant sur le lien **"Add dynamic content"**
+
+Pour le paramètre **"Prefix"** rajoutez l'expression
+
+```Javascript
+@pipeline().parameters.FileName
+```
+
+Pour le paramètre **"Date"** rajoutez l'expression
+
+```Javascript
+@variables('Date')
+```
+
+![sparkle](Pictures/087.png)
+
+
+
+
+
+Pour le paramètre **"Name"** rajoutez l'expression que vous souhaitez. Ici pour illustrer cet exemple je vais tout simplement mettre la valeur **MonParamètre**.
+
+![sparkle](Pictures/088.png)
+
+
+Voici ce que va donner la partie **"Sink"** de l'activité de copie
+
+![sparkle](Pictures/089.png)
+
+Nous allons enfin rajouter une activité **"Delete"** afin de le *"blob storage"* après l'exécution du pipeline.
+
+Depuis le volet **"Activities"**, dans la rubrique **"General"**, rajoutez l'activité **"Delete"** dans votre pipeline
+
+![sparkle](Pictures/090.png)
+
+Cliquez sur l'onglet **"Source"**. Sélectionnez le *"dataset"* correspondant au *"blob storage"*. Cliquez dans le champ **"value"** correspondant au paramètre puis cliquez sur **"Add dynamic content"**.
+
+![sparkle](Pictures/091.png)
+
+Dans le volet **"Add dynamic content"**, rajoutez l'expression
+
+```Javascript
+@pipeline().parameters.FileName
+```
+
+Puis cliquez sur le bouton **"Finish"**
+
+![sparkle](Pictures/092.png)
+
+Cliquez sur l'onglet **"Logging settings"** pour désactiver le logging en décochant la case **"Enable logging"**. On ne va pas en avoir besoin pour cet exemple.
+
+![sparkle](Pictures/093.png)
+
+Cliquez sur le bouton **"publish"**
+
+![sparkle](Pictures/094.png)
+
+#### ajout d'un déclencheur de type évènement
+
+
+Nous allons maintenant rajouter un déclencheur pour que le pipeline se déclenche dès qu'un nouveau fichier arrive.
+
+Cliquez sur **"Add trigger"** puis sur **"New/Edit"**
+
+![sparkle](Pictures/095.png)
+
+dans la fenêtre **"Add trigger"**, dans la liste déroulante, cliquez sur **"+ New"**
+
+![sparkle](Pictures/096.png)
+
+Dans la rubrique **"Type"** sélectionnez **"Event"**. Puis donnez les informations de connexion à votre compte de stockage. Comme nous allons surveiller l'arrivée des fichiers à la racine du conteneur, nous allons laisser le champ **"Blob path begins with"** vide (dans le cas où vous souhaitez surveiller un dossier bien particulier, vous pouvez tout simplement mettre le nom du répertoire, sans aucun autre caractère tel que / ou " ). Dans le chanp **"Blob path ends with"**, nous allons indiquer l'extension des fichiers que l'on souhaite traiter. Ici on indiquera **".csv"**
+
+Dans la rubrique **"Event"**, cliquez sur **"Blob created"**. Cliquez sur le bouton **"Continue"**
+
+![sparkle](Pictures/097.png)
+
+Si vous avez déjà des fichiers csv dans votre compte de stockage, ils devraient être affichés dans cette fenêtre. C'est aussi un bon moyen de vérifier la syntaxe utilisé dans les champs **"Blob path begins with"** et **"Blob path ends with"** du volet précédent. Cliquez sur le bouton **"Continue"**.
+
+![sparkle](Pictures/098.png)
+
+Dans le volet **"Trigger run paramètre"**, il est possible de définir une valeur au paramètre de notre pipeline. C'est ce que nous allons faire avec l'expression suivante :
+
+```Javascript
+@trigger().outputs.body.fileName
+```
+
+Cliquez sur le bouton **OK"**
+
+![sparkle](Pictures/099.png)
+
+Puis publiez le pipeline en cliquant sur le bouton **"Publish all"**
+
+![sparkle](Pictures/100.png)
+
 
