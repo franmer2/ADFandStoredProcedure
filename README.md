@@ -697,7 +697,19 @@ dans la fenêtre **"Add trigger"**, dans la liste déroulante, cliquez sur **"+ 
 
 ![sparkle](Pictures/096.png)
 
-Dans la rubrique **"Type"** sélectionnez **"Event"**. Puis donnez les informations de connexion à votre compte de stockage. Comme nous allons surveiller l'arrivée des fichiers à la racine du conteneur, nous allons laisser le champ **"Blob path begins with"** vide (dans le cas où vous souhaitez surveiller un dossier bien particulier, vous pouvez tout simplement mettre le nom du répertoire, sans aucun autre caractère tel que / ou " ). Dans le chanp **"Blob path ends with"**, nous allons indiquer l'extension des fichiers que l'on souhaite traiter. Ici on indiquera **".csv"**
+Dans la rubrique **"Type"** sélectionnez **"Event"**. Puis donnez les informations de connexion à votre compte de stockage. Comme nous allons surveiller l'arrivée des fichiers à la racine du conteneur, nous allons laisser le champ **"Blob path begins with"** vide.
+
+=======================================
+
+**ATTENTION !!!** Le déclencheur va surveiller l'ensemble du conteneur, ce qui veut dire que si un fichier csv arrive dans un sous dossier, le pipeline sera déclenché.
+Dans le cas où vous souhaitez surveiller un dossier bien particulier, et ainsi isoler le traitement des fichiers dans une zone précise de votre conteneur, vous pouvez tout simplement mettre le nom du répertoire à surveiller). 
+
+![sparkle](Pictures/200.png)
+
+=======================================
+
+
+Dans le chanp **"Blob path ends with"**, nous allons indiquer l'extension des fichiers que l'on souhaite traiter. Ici on indiquera **".csv"**
 
 Dans la rubrique **"Event"**, cliquez sur **"Blob created"**. Cliquez sur le bouton **"Continue"**
 
@@ -721,4 +733,31 @@ Puis publiez le pipeline en cliquant sur le bouton **"Publish all"**
 
 ![sparkle](Pictures/100.png)
 
+### Test du pipeline
 
+Téléchargez le fichier d'exemple dans votre conteneur Blob. Par exemple avec Azure Storage Explorer
+
+![sparkle](Pictures/101.png)
+
+Puis ensuite, aller dans votre stockage "file storage" pour vérifier si un fichier est présent avec la bonne nomenclature au niveau de son nom
+
+
+![sparkle](Pictures/102.png)
+
+Vérifiez aussi si le fichier à bien été effacé du stockage blob en fin d'exécution du pipleine
+
+![sparkle](Pictures/103.png)
+
+
+Du côté du portail Azure Data Factory, vous pouvez monitorer la bonne exécution du déclencheur et du pipeline en allant dans **"Monitor"** puis **"Trigger runs"** ou **"Pipeline runs"**
+
+Ci dessous un exemple de monitoring du déclencheur
+
+
+![sparkle](Pictures/104.png)
+
+
+
+Si vous devez faire des tests de votre pipeline sans utilser le déclencheir, il est possible de l'arréter en allant dans **"Manage"**, **"Triggers"** puis en cliquant sur **"Deacticate"**
+
+![sparkle](Pictures/105.png)
