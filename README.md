@@ -1,11 +1,12 @@
 # Azure Data Factory et procedure stockée (Azure SQL Database)
 
-Lors d'un projet avec un client, une étape consistait à transformer des fichiers, déposés dans un stockage blob, à l'aide d'une procédure stockée existante, puis de déplacer le résultat dans un stockage "Azure Files".
+Lors d'un projet avec un client, une étape consistait à transformer des fichiers, déposés dans un stockage blob, à l'aide d'une procédure stockée existante, puis de déplacer le résultat dans un stockage "Azure Files". J'ai trouvé intéressant d'utiliser l'activité de copie ayant pour source une procédure stockée.
 
-Cet article a pour but de partager les différentes étapes pour réaliser ce pipeline de transformation et ainsi que les différentes astuces utilisées pour mener à bien cette partie du projet
+Cet article a pour but de partager les différentes étapes pour réaliser ce pipeline de transformation et ainsi que les différentes astuces utilisées pour mener à bien cette partie du projet.
 
 
-## Pré requis
+
+## Prérequis
 
 - [Un abonnement Azure](https://azure.microsoft.com/fr-fr/free/)
 - [Azure Storage Explorer](https://azure.microsoft.com/en-us/features/storage-explorer/) 
@@ -14,7 +15,7 @@ Cet article a pour but de partager les différentes étapes pour réaliser ce pi
 
 # Création des services Azure
 ## Création d'un groupe de ressources
-Nous allons commencer par créer un groupe de ressouces afin d'héberger les différents services de notre solution de transcription de fichiers audio.
+Nous allons commencer par créer un groupe de ressources afin d'héberger les différents services de notre solution.
 
 Depuis le portail [Azure](https://portal.azure.com), cliquez sur "**Create a resource**"
 
@@ -37,7 +38,7 @@ Dans l'écran de validation, cliquez sur le bouton "**Create**"
 
 ![sparkle](Pictures/005.png)
 
-Revenez à l'accueil du portail Azure. Cliquez sur le menu burger en haut à gauche puis sur "**Resource** **groups**"
+Revenez à l'accueil du portail Azure. Cliquez sur le menu burger en haut à gauche puis sur "**Resource groups**"
 
 ![sparkle](Pictures/006.png)
 
@@ -69,9 +70,9 @@ Après avoir vérifié les informations de création du compte de stockage, cliq
 ![sparkle](Pictures/012.png)
 
 ## Création d'une base de données Azure SQL
-Ici, nous allons créer une base de données uniquement pour héberger et exécuter notre procédure stockée. Vous pouvez donc, si vous le souhiatez, utiliser une base de données Azure éxistante.
+Ici, nous allons créer une base de données uniquement pour héberger et exécuter notre procédure stockée. Vous pouvez donc, si vous le souhiatez, utiliser une base de données Azure existante.
 
-Retournez dans le groupe de ressources. Vous devez avoir votre compte de stockage comme première resource.
+Retournez dans le groupe de ressources. Vous devez avoir votre compte de stockage comme première ressource.
 
 Cliquez sur le bouton "**Add**"
 
@@ -89,9 +90,9 @@ Choisissez **SQL Database** puis cliquez sur le bouton **Create**
 
 ![sparkle](Pictures/016.png)
 
-Choisissez le groupe de ressouces précédement créé, définissez le nom de la base de données et créez un nouveau server SQL (il est aussi possible d'utiliser un serveur existant)
+Choisissez le groupe de ressources précédemment créé, définissez le nom de la base de données et créez un nouveau server SQL (il est aussi possible d'utiliser un serveur existant)
 
-Un tier **Basic** sera largement suffiment pour notre démonstration
+Un tier **Basic** sera largement suffisant pour notre démonstration
 
 Cliquez sur le bouton **"Review + create"**
 
@@ -132,7 +133,7 @@ Cochez la case **"Configure Git Later"** et cliquez sur le bouton **"Review + cr
 
 ![sparkle](Pictures/024.png)
 
-Dans la page de validation, ciquez sur le bouton **"Create"**
+Dans la page de validation, cliquez sur le bouton **"Create"**
 
 ![sparkle](Pictures/025.png)
 
@@ -140,11 +141,11 @@ Après la création du service Azure Data Factory, vous devriez avoir 4 services
 
 ![sparkle](Pictures/026.png)
 
-## Préparation de la procédure stockée.
+## Préparation de la procédure stockée
 
 Dans notre exemple, la procédure stockée va lire des données dans un stockage blob et effectuer des transformations. Les transformations réalisées ici seront extrêmement basiques. Le but ici est d'illustrer l'utilisation des procédures stockées avec Azure Data Factory.
 
-### Paramètrage du serveur Azure SQL
+### Paramétrage du serveur Azure SQL
 
 Configurez le Firewall du serveur Azure SQL afin de pouvoir vous y connecter avec des outils comme SQL Server Management Studio ou Azure Data Studio
 
@@ -159,9 +160,9 @@ Après configuration des adresses ip, cliquez sur le bouton **"Save"**
 
 ![sparkle](Pictures/028.png)
 
-### Crétion du fichier de format
+### Procédure de crétion du fichier de format
 
-La procédure stockée va utiliser la fonction [OPENROWSET](https://docs.microsoft.com/fr-fr/sql/t-sql/functions/openrowset-transact-sql?view=sql-server-ver15). Et comme on souhaite récupérer les informations du fichier dans le but de faire des opérations sur les données, nous avons besoin de définir un [fichier de format](https://docs.microsoft.com/en-us/sql/t-sql/functions/openrowset-transact-sql?view=sql-server-ver15).
+La procédure stockée va utiliser la fonction [OPENROWSET](https://docs.microsoft.com/fr-fr/sql/t-sql/functions/openrowset-transact-sql?view=sql-server-ver15). Et comme on souhaite récupérer les informations du fichier dans le but de faire des opérations sur les données, nous avons besoin de définir un [fichier de format](https://docs.microsoft.com/fr-fr/sql/t-sql/functions/openrowset-transact-sql?view=sql-server-ver15).
 
 Le format des fichiers que nous allons traiter pour cet exemple est très simple. Il est constitué de 3 colonnes :
 
@@ -171,14 +172,14 @@ Le format des fichiers que nous allons traiter pour cet exemple est très simple
 
 La création du fichier de format va se faire en 3 étapes
 
-- Création d'une table SQL correspodant au format du fichier
+- Création d'une table SQL correspondant au format du fichier
 - Utilisation de l'outil BCP pour créer le fichier de format
 - Téléchargement du fichier dans le compte de stockage
 
 
 #### Création de la table SQL
 
-Avec [Azure Data Studio](https://docs.microsoft.com/fr-fr/sql/azure-data-studio/download-azure-data-studio?view=sql-server-ver15), connectez vous à votre base Azure SQL, avec les touches **Ctrl** et **N** créé un nouveau fichier SQL
+Avec [Azure Data Studio](https://docs.microsoft.com/fr-fr/sql/azure-data-studio/download-azure-data-studio?view=sql-server-ver15), connectez-vous à votre base Azure SQL, puis avec la combinaison de touches **Ctrl** et **N**, créez un nouveau fichier SQL
 
 ![sparkle](Pictures/029.png)
 
@@ -186,14 +187,14 @@ Avec [Azure Data Studio](https://docs.microsoft.com/fr-fr/sql/azure-data-studio/
 Puis copiez le script ci-dessous. Cliquez sur le bouton "Play"
 
 
-
+```Javascript
 CREATE TABLE [dbo].[MyFirstImport](
 	[LastName] [varchar](30) NULL,
 	[FirstName] [varchar](25) NULL,
 	[Sales] [int] NULL
 ) ON [PRIMARY]
 GO
-
+```
 
 ![sparkle](Pictures/030.png)
 
@@ -201,15 +202,15 @@ Si tout se passe bien vous devriez avoir le message suivant et accès à votre t
 
 ![sparkle](Pictures/031.png)
 
-### Création du fichier de format
+#### Création du fichier de format
 
-Assurez-vous d'avoir la dernière version de l'outil BCP. Pour cet exemple, j'ai utilisé la [version 15](https://docs.microsoft.com/en-us/sql/tools/bcp-utility?view=sql-server-ver15).
+Assurez-vous d'avoir la dernière version de l'outil BCP. Pour cet exemple, j'ai utilisé la [version 15](https://docs.microsoft.com/fr-fr/sql/tools/bcp-utility?view=sql-server-ver15).
 
 Pour être certains d'utiliser la bonne version de l'outil BCP, allez dans le répertoire d'installation. Dans mon cas le répertoire est :
 
 C:\Program Files\Microsoft SQL Server\Client SDK\ODBC\170\Tools\Binn
 
-Puis utilisez la commande suivante (J'ai un répetoire *Temp* sur mon disque C:)
+Puis utilisez la commande suivante (J'ai un répertoire *Temp* sur mon disque C:)
 
 ```javascript
 
@@ -221,12 +222,12 @@ Une illustration ci-dessous :
 ![sparkle](Pictures/032.png)
 
 
-Youd devez obtenir le ficier de format dans le répertoire spécifié avac la commande BCP
+Vous devez obtenir le fichier de format dans le répertoire spécifié avec la commande BCP
 
 ![sparkle](Pictures/033.png)
 
 
-### Téléchargez le fichier format dans le compte de stockage Azure
+#### Téléchargez le fichier format dans le compte de stockage Azure
 
 Depuis le portail Azure, allez sur votre compte de stockage
 
@@ -247,7 +248,7 @@ Donnez un nom et cliquez sur le bouton **"Create"**
 
 Nous allons créer un répertoire pour notre fichier de format.
 
-Cliquez sur **"Storage Explorer (preview)"**, sélectionnez le conteneur créé précédement, puis cliquez sur **"New Folder"**
+Cliquez sur **"Storage Explorer (preview)"**, sélectionnez le conteneur créé précédemment, puis cliquez sur **"New Folder"**
 
 ![sparkle](Pictures/038.png)
 
@@ -255,7 +256,7 @@ Donnez un nom au répertoire et cliquez sur le bouton **"Ok"**
 
 ![sparkle](Pictures/039.png)
 
-Cliquez sur le bouton **"Upload"** et téléchargez le fichier de format précédement créé avec la fonction BCP.
+Cliquez sur le bouton **"Upload"** et téléchargez le fichier de format précédemment créé avec la fonction BCP.
 
 ![sparkle](Pictures/040.png)
 
@@ -284,14 +285,16 @@ Vous devriez obtenir un résultat similaire à la copie d'écran ci-dessous :
 
 ## Création de la procédure stockée
 
-Notre procédure stockée va lire des fichiers qui se trouvent dans notre compte de stockage et effectuer des opéations sur les données qu'elle va récupérer.
+Notre procédure stockée va lire des fichiers qui se trouvent dans notre compte de stockage et effectuer des opérations sur les données qu'elle va récupérer.
 
-Il est donc néccessaire de faire des étapes préliminaires pour permettre à la procédure stockée d'accéder au compte de stockage
+Il est donc nécessaire de faire des étapes préliminaires pour permettre à la procédure stockée d'accéder au compte de stockage
 
 - Création d'une signature d'accès partagé (compte de stockage) [(Documentation)](https://docs.microsoft.com/fr-fr/azure/storage/common/storage-sas-overview)
-- Création d'une clef principale de base de données [(Doucumentation)](https://docs.microsoft.com/fr-fr/sql/t-sql/statements/create-master-key-transact-sql?view=sql-server-ver15)
+  
+- Création d'une clef principale de base de données [(Documentation)](https://docs.microsoft.com/fr-fr/sql/t-sql/statements/create-master-key-transact-sql?view=sql-server-ver15)
 
-- Création des informations d'identification pour accéder au compte de stockage [(Documetation)](https://docs.microsoft.com/fr-fr/sql/t-sql/statements/create-database-scoped-credential-transact-sql?view=sql-server-ver15)
+- Création des informations d'identification pour accéder au compte de stockage [(Documentation)](https://docs.microsoft.com/fr-fr/sql/t-sql/statements/create-database-scoped-credential-transact-sql?view=sql-server-ver15)
+  
 - Création d'une source externe [(Documentation)](https://docs.microsoft.com/fr-fr/sql/t-sql/statements/create-external-data-source-transact-sql?view=sql-server-ver15)
 
 
@@ -312,7 +315,7 @@ Copiez le contenu du champ **"SAS Token"** puis gardez le sous la main, on va en
 
 ### Création d'une clef principale de base de données (Azure SQL)
 
-Depuis Azure Data Studio, copiez la reqûete ci-dessous :
+Depuis Azure Data Studio, copiez la requête ci-dessous :
 
 ```javascript
 CREATE MASTER KEY ENCRYPTION BY PASSWORD='<EnterStrongPasswordHere>';
@@ -357,7 +360,7 @@ WITH
 
 ```
 
-Remplacez <YOUR LOCATION> par le chemin de votre conteneur. Cette information peut être retouvée dans le portail Azure, dans les propriétés de du conteneur
+Remplacez <YOUR LOCATION> par le chemin de votre conteneur. Cette information peut être retrouvée dans le portail Azure, dans les propriétés de du conteneur
 
 ![sparkle](Pictures/046.png)
 
@@ -395,7 +398,7 @@ Il est possible de tester la procédure stockée en téléchargeant le fichier d
 
 ![sparkle](Pictures/049.png)
 
-Puis dans Azure Data Studio, entrez le script ci-dessous:
+Puis dans Azure Data Studio, entrez le script ci-dessous :
 
 ```Javascript
 EXECUTE franmer @MyFileName='test.csv'
@@ -414,7 +417,7 @@ Depuis le portail Azure, retrouvez votre service Azure Data Factory, puis clique
 ## Création des services liés
 ### Service lié Blob Storage
 
-Une fois sur la pagge d'accueil d'AZure Data Factory, cliquez sur le bouton **"Manage"** à gauche de l'écran
+Une fois sur la page d'accueil d'Azure Data Factory, cliquez sur le bouton **"Manage"** à gauche de l'écran
 
 
 ![sparkle](Pictures/052.png)
@@ -444,7 +447,7 @@ Puis complétez les informations de connexion
 
 ### Service lié Azure SQL Database
 
-Enfin, Créez un service lié de type **"Azure SQL Database"**
+Enfin, créez un service lié de type **"Azure SQL Database"**
 
 ![sparkle](Pictures/058.png)
 
@@ -467,7 +470,7 @@ Ci-dessous une vue globale du pipeline que nous allons créer
 ### Création des "Datasets"
 #### Création du "Blob Storage Dataset"
 
-Nous allons commencer par créer nos *"Datasets"* afin d'accéder à notre procédure stockée. notre *"blob storage"* et le *"file storage"*
+Nous allons commencer par créer nos *"Datasets"* afin d'accéder à notre procédure stockée, notre *"blob storage"* et le *"file storage"*
 
 Dans la console Azure Data Factory, sur la gauche, cliquez sur le bouton **"+"** puis sur **"Dataset"**
 
@@ -478,6 +481,7 @@ Choisissez un *"Dataset"* de type **"Azure Blob Storage"** puis cliquez sur le b
 ![sparkle](Pictures/063.png)
 
 Choisissez le format **"DelimitedText"** puis cliquez sur le bouton **"Continue"**
+(On ne peut pas choisir le type binaire car la source doit aussi être du type binaire. Or l'activité de copie que nous allons faire dans notre pipeline aura une procédure stockée comme source)
 
 ![sparkle](Pictures/064.png)
 
@@ -493,7 +497,7 @@ Cliquez sur l'onglet **"Connection"**, puis dans le champ **"File"**. Cliquez en
 
 ![sparkle](Pictures/067.png)
 
-Le volet **"Add dynamic content"** apparaît. rajoutez l'expression
+Le volet **"Add dynamic content"** apparaît. Rajoutez l'expression
 
 ```Javascript
  @dataset().FileName 
@@ -534,7 +538,7 @@ Cliquez sur l'onglet **"Connection"**, puis dans le champ **"File"**. Cliquez en
 
 ![sparkle](Pictures/073.png)
 
-Le volet **"Add dynamic content"** apparaît. rajoutez l'expression
+Le volet **"Add dynamic content"** apparaît. Rajoutez l'expression
 
 ```Javascript
  @concat(dataset().Prefix,'-',dataset().Date,'-',dataset().Name,'.csv')
@@ -558,7 +562,7 @@ Choisissez un *"Dataset"* de type **"Azure SQL Database"** puis cliquez sur le b
 
 ![sparkle](Pictures/076.png)
 
-Renseignez les données concerant Azure SQL puis cliquez sur le bouton **"OK"**
+Renseignez les données concernant Azure SQL puis cliquez sur le bouton **"OK"**
 
 ![sparkle](Pictures/077.png)
 
@@ -578,7 +582,7 @@ Au niveau de votre pipeline, créez un nouveau paramètre. Dans l'onglet **"Para
 ![sparkle](Pictures/080.png)
 
 
-Cliquez ensuite sur l'onglet **"Variables"** afin de rajouter une variable pour capturer la date. Cliquez sur le bouton **"+ New"** puis puis donnez un nom à la variable
+Cliquez ensuite sur l'onglet **"Variables"** afin de rajouter une variable pour capturer la date. Cliquez sur le bouton **"+ New"** puis donnez un nom à la variable
 
 ![sparkle](Pictures/081.png)
 
@@ -656,7 +660,7 @@ Voici ce que va donner la partie **"Sink"** de l'activité de copie
 
 ![sparkle](Pictures/089.png)
 
-Nous allons enfin rajouter une activité **"Delete"** afin de le *"blob storage"* après l'exécution du pipeline.
+Enfin, nous allons rajouter une activité **"Delete"** 
 
 Depuis le volet **"Activities"**, dans la rubrique **"General"**, rajoutez l'activité **"Delete"** dans votre pipeline
 
@@ -693,7 +697,7 @@ Cliquez sur **"Add trigger"** puis sur **"New/Edit"**
 
 ![sparkle](Pictures/095.png)
 
-dans la fenêtre **"Add trigger"**, dans la liste déroulante, cliquez sur **"+ New"**
+Dans la fenêtre **"Add trigger"**, dans la liste déroulante, cliquez sur **"+ New"**
 
 ![sparkle](Pictures/096.png)
 
@@ -709,13 +713,13 @@ Dans le cas où vous souhaitez surveiller un dossier bien particulier, et ainsi 
 =======================================
 
 
-Dans le chanp **"Blob path ends with"**, nous allons indiquer l'extension des fichiers que l'on souhaite traiter. Ici on indiquera **".csv"**
+Dans le champ **"Blob path ends with"**, nous allons indiquer l'extension des fichiers que l'on souhaite traiter. Ici on indiquera **".csv"**
 
 Dans la rubrique **"Event"**, cliquez sur **"Blob created"**. Cliquez sur le bouton **"Continue"**
 
 ![sparkle](Pictures/097.png)
 
-Si vous avez déjà des fichiers csv dans votre compte de stockage, ils devraient être affichés dans cette fenêtre. C'est aussi un bon moyen de vérifier la syntaxe utilisé dans les champs **"Blob path begins with"** et **"Blob path ends with"** du volet précédent. Cliquez sur le bouton **"Continue"**.
+Si vous avez déjà des fichiers csv dans votre compte de stockage, ils devraient être affichés dans cette fenêtre. C'est aussi un bon moyen de vérifier la syntaxe utilisée dans les champs **"Blob path begins with"** et **"Blob path ends with"** du volet précédent. Cliquez sur le bouton **"Continue"**.
 
 ![sparkle](Pictures/098.png)
 
@@ -744,20 +748,20 @@ Puis ensuite, aller dans votre stockage *"file storage"* pour vérifier si un fi
 
 ![sparkle](Pictures/102.png)
 
-Vérifiez aussi si le fichier à bien été effacé du stockage blob en fin d'exécution du pipleine
+Vérifiez aussi si le fichier a bien été effacé du stockage blob en fin d'exécution du pipleine
 
 ![sparkle](Pictures/103.png)
 
 
 Du côté du portail Azure Data Factory, vous pouvez monitorer la bonne exécution du déclencheur et du pipeline en allant dans **"Monitor"** puis **"Trigger runs"** ou **"Pipeline runs"**
 
-Ci dessous un exemple de monitoring du déclencheur
+Ci-dessous un exemple de monitoring du déclencheur
 
 
 ![sparkle](Pictures/104.png)
 
 
 
-Si vous devez faire des tests de votre pipeline sans utilser le déclencheur, il est possible de l'arréter en allant dans **"Manage"**, **"Triggers"** puis en cliquant sur **"Deacticate"**
+Si vous devez faire des tests de votre pipeline sans utiliser le déclencheur, il est possible de l'arrêter en allant dans **"Manage"**, **"Triggers"** puis en cliquant sur **"Deacticate"**
 
 ![sparkle](Pictures/105.png)
