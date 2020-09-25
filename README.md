@@ -4,7 +4,7 @@ Lors d'un projet avec un client, une étape consistait à transformer des fichie
 
 Cet article a pour but de partager les différentes étapes pour réaliser ce pipeline de transformation et ainsi que les différentes astuces utilisées pour mener à bien cette partie du projet.
 
-
+![sparkle](Pictures/300.png)
 
 ## Prérequis
 
