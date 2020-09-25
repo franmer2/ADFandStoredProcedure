@@ -739,7 +739,7 @@ Téléchargez le fichier d'exemple dans votre conteneur Blob. Par exemple avec A
 
 ![sparkle](Pictures/101.png)
 
-Puis ensuite, aller dans votre stockage "file storage" pour vérifier si un fichier est présent avec la bonne nomenclature au niveau de son nom
+Puis ensuite, aller dans votre stockage *"file storage"* pour vérifier si un fichier est présent avec la bonne nomenclature au niveau de son nom
 
 
 ![sparkle](Pictures/102.png)
@@ -758,6 +758,6 @@ Ci dessous un exemple de monitoring du déclencheur
 
 
 
-Si vous devez faire des tests de votre pipeline sans utilser le déclencheir, il est possible de l'arréter en allant dans **"Manage"**, **"Triggers"** puis en cliquant sur **"Deacticate"**
+Si vous devez faire des tests de votre pipeline sans utilser le déclencheur, il est possible de l'arréter en allant dans **"Manage"**, **"Triggers"** puis en cliquant sur **"Deacticate"**
 
 ![sparkle](Pictures/105.png)
